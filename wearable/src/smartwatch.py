@@ -39,6 +39,7 @@ class Smartwatch():
         print("[x] Start transmitting data")
 
         while True:
+            print(f"[x] Starting reading {self.__filename}")
             with open(self.__filename, newline='') as csvfile:
                 print("[x] Opened the csv file successfully")
 
@@ -49,6 +50,7 @@ class Smartwatch():
                     self.__send_data(data)
 
                     time.sleep(self.__sampling_period)
+            print(f"[x] Finished reading {self.__filename}")
 
     def __transform_data(self, data: dict) -> dict:
         del data['SystemDate']
