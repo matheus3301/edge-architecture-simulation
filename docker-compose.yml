@@ -1,27 +1,32 @@
-version: '3.2'
+version: '3.3'
 services:
+  broker:
+    image: rabbitmq:3-management-alpine
+    container_name: 'broker'
+    hostname: 'broker'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    # volumes:
+    #   - rabbitmq_data:/var/lib/rabbitmq/
+    #   - rabbitmq_log:/var/log/rabbitmq/
+    networks:
+      - default
+      
   smartwatch_node:
     depends_on:
       - broker
+    environment:
+      WAIT_HOSTS: broker:5672
     build: ./wearable
     scale: 3
     networks:
       - default
-  broker:
-    image: rabbitmq:3-management-alpine
-    container_name: 'rabbitmq'
-    ports:
-      - 5672:5672
-      - 15672:15672
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq/
-      - rabbitmq_log:/var/log/rabbitmq/
-    networks:
-      - default
 
-volumes:
-  rabbitmq_data:
-  rabbitmq_log:
+# volumes:
+#   rabbitmq_data:
+#   rabbitmq_log:
 
 networks:
-  default: {}
+  default:
+    driver: bridge

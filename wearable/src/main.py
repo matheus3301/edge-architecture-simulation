@@ -8,7 +8,7 @@ device = Smartwatch(
     smartwatch_id,
     0.001,
     'data.csv',
-    'default',
+    'broker',
     5672,
     'guest',
     'guest',
