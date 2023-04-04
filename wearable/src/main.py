@@ -7,6 +7,7 @@ smartwatch_id = str(uuid.uuid4())
 device = Smartwatch(
     smartwatch_id,
     0.001,
+    600,
     'data.csv',
     'broker',
     5672,

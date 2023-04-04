@@ -5,12 +5,13 @@ import pika
 
 
 class Smartwatch():
-    def __init__(self, unique_identifer: str,  sampling_period: int, filename: str, broker_hostname: str, broker_port: int, broker_username: str, broker_password: str, queue_name: str) -> None:
+    def __init__(self, unique_identifer: str,  sampling_period: int, buffer_size: int, filename: str, broker_hostname: str, broker_port: int, broker_username: str, broker_password: str, queue_name: str) -> None:
         print("[x] Booting the Smartwatch simulation")
         print(f"[x] The smartwatch got the id {unique_identifer}")
 
         self.__unique_identifer = unique_identifer
         self.__sampling_period = sampling_period
+        self.__buffer_size = buffer_size
         self.__filename = filename
         self.__broker_hostname = broker_hostname
         self.__queue_name = queue_name
@@ -30,14 +31,15 @@ class Smartwatch():
         self.__channel.queue_declare(queue=self.__queue_name)
 
         print(
-            f"[x] The smartwatch will start transmitting the data on a frequency of {1/self.__sampling_period} times per second"
+            f"[x] The smartwatch will start transmitting the data with a sampling time of {self.__sampling_period} seconds over a buffer with size {self.__buffer_size}"
         )
 
         self.__start_transmiting_data()
 
     def __start_transmiting_data(self) -> None:
         print("[x] Start transmitting data")
-
+        
+        accumulated_data = []
         while True:
             print(f"[x] Starting reading {self.__filename}")
             with open(self.__filename, newline='') as csvfile:
@@ -47,9 +49,15 @@ class Smartwatch():
 
                 for data in spamreader:
                     data = self.__transform_data(data)
-                    self.__send_data(data)
+
+                    if len(accumulated_data) == self.__buffer_size:
+                        self.__send_data(accumulated_data)
+                        accumulated_data = []
+
+                    accumulated_data.append(data)                        
 
                     time.sleep(self.__sampling_period)
+
             print(f"[x] Finished reading {self.__filename}")
 
     def __transform_data(self, data: dict) -> dict:
