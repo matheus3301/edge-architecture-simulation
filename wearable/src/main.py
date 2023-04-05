@@ -13,5 +13,5 @@ device = Smartwatch(
     5672,
     'guest',
     'guest',
-    'smartwatch_sensor_data_'+smartwatch_id
+    'smartwatch_sensor_data'
 )

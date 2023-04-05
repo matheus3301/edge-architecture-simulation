@@ -16,13 +16,35 @@ services:
   smartwatch_node:
     depends_on:
       - broker
+      - raspberry_node
     environment:
       WAIT_HOSTS: broker:5672
     build: ./wearable
     deploy:
-      replicas: 3
+      replicas: 1
     networks:
       - default
+
+  raspberry_node:
+    depends_on:
+      - broker
+    environment:
+      WAIT_HOSTS: broker:5672
+      LATITUDE_LO: -4
+      LATITUDE_HI: -3
+      LONGITUDE_LO: -38
+      LONGITUDE_HI: -37
+      BROKER_HOSTNAME: broker
+      BROKER_PORT: 5672
+      BROKER_USERNAME: guest
+      BROKER_PASSWORD: guest
+      BROKER_QUEUE_NAME: smartwatch_sensor_data
+    build: ./edge
+    deploy:
+      replicas: 1
+    networks:
+      - default
+    
 
 # volumes:
 #   rabbitmq_data:
