@@ -1,1 +1,1 @@
-# samsung-edge-architecture-simulation
+# edge-architecture-simulation
